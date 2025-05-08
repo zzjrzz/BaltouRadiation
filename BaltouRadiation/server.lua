@@ -1,11 +1,14 @@
-ESX = exports["es_extended"]:getSharedObject()
+local QBCore = exports['qb-core']:GetCoreObject()
 
-ESX.RegisterServerCallback('checkAntiRadiationMask', function(source, cb)
-    local xPlayer = ESX.GetPlayerFromId(source)
-    local item = exports.ox_inventory:GetItem(source, 'antiradiationmask')
-
-    if item and item.count and item.count > 0 then
-        cb(true)
+QBCore.Functions.CreateCallback('checkAntiRadiationMask', function(source, cb)
+    local Player = QBCore.Functions.GetPlayer(source)
+    if Player then
+        local item = Player.Functions.GetItemByName('antiradiationmask')
+        if item then
+            cb(true)
+        else
+            cb(false)
+        end
     else
         cb(false)
     end
