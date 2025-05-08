@@ -3,12 +3,43 @@ local QBCore = exports['qb-core']:GetCoreObject()
 local isInRadiationZone = false
 local hasAntiRadiationMask = false
 local currentPercentage = 0
+local ActiveRadiationZones = {}
 
 -- Local function to check if player has the mask
 local function updateMaskStatus()
     QBCore.Functions.TriggerCallback('checkAntiRadiationMask', function(hasMask)
         hasAntiRadiationMask = hasMask
     end)
+end
+
+-- Function to add radiation blips
+function addRadiationBlips()
+    ActiveRadiationZones = {} -- Clear previous
+
+    local availableZones = {}
+    for i, zone in pairs(Config.RadiationZones) do
+        table.insert(availableZones, zone)
+    end
+
+    local minZones = 2 -- Minimum zones active
+    local maxZones = 5 -- Maximum zones active
+    local numberOfZones = math.random(minZones, math.min(maxZones, #availableZones))
+
+    for i = 1, numberOfZones do
+        if #availableZones == 0 then break end
+
+        local randomIndex = math.random(1, #availableZones)
+        local selectedZone = availableZones[randomIndex]
+
+        table.insert(ActiveRadiationZones, selectedZone)
+
+        -- Add blip for this zone
+        local blip = AddBlipForRadius(selectedZone.position, selectedZone.radius)
+        SetBlipColour(blip, 66) -- Yellow
+        SetBlipAlpha(blip, 128) -- Semi-transparent
+
+        table.remove(availableZones, randomIndex) -- Prevent duplicates
+    end
 end
 
 -- Initialize
@@ -26,7 +57,7 @@ CreateThread(function()
         local closestDistance = nil
         local closestZone = nil
 
-        for _, zone in pairs(Config.RadiationZones) do
+        for _, zone in pairs(ActiveRadiationZones) do
             local distance = #(playerPos - zone.position)
             if distance <= zone.radius then
                 foundZone = true
