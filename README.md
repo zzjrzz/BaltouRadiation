@@ -1,3 +1,3 @@
-https://discord.gg/DcATp5UvXK
-
-Baltou Développement
+Forked from https://github.com/BaltouTV/BaltouRadiation
+Adapted to work with qb-core
+Optimized for client checks
